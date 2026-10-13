@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase } from './supabase.js'
+import { supabase, configMissing } from './supabase.js'
 import { useStore } from './lib/useStore.js'
 import { stockState } from './lib/metrics.js'
 import Login from './pages/Login.jsx'
@@ -38,6 +38,19 @@ export default function App() {
     return () => data.subscription.unsubscribe()
   }, [])
 
+  if (configMissing) {
+    return (
+      <div className="auth">
+        <div className="panel auth-card">
+          <h1>SmartStock</h1>
+          <div className="notice err" style={{ margin: 0 }}>
+            Supabase is not configured. Set <code>VITE_SUPABASE_URL</code> and{' '}
+            <code>VITE_SUPABASE_PUBLISHABLE_KEY</code> in your hosting environment variables, then redeploy.
+          </div>
+        </div>
+      </div>
+    )
+  }
   if (session === undefined) return null
   if (!session) return <Login />
   return <Shell session={session} />
